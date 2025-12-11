@@ -114,8 +114,10 @@ export function OrganizationStory({
 
   if (!currentStory) return null;
 
+  // настроить высоту
+
   return (
-    <div className="relative w-full h-full md:flex xl:grid xl:grid-cols-3 justify-center pt-2 pb-4">
+    <div className="relative w-full h-full md:flex xl:grid xl:grid-cols-3 justify-center pt-3">
       {isActive && (
         <StoryDescription
           containerClassName="hidden xl:flex"
@@ -125,7 +127,7 @@ export function OrganizationStory({
         />
       )}
       <div className="flex w-full justify-center xl:justify-start xl:col-span-2 xl:col-start-2">
-        <div className="w-full max-w-[458px] h-[95vh] rounded-3xl overflow-hidden relative shadow-[0px_0px_46px_0px_rgba(255,_255,_255,_0.05)]">
+        <div className="w-full max-w-[458px] h-full rounded-3xl overflow-hidden relative shadow-[0px_0px_46px_0px_rgba(255,_255,_255,_0.05)]">
           <div className="absolute top-4 left-4 right-4 z-20 flex gap-1">
             {organization.stories?.map((_, index) => (
               <div key={index} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
@@ -219,11 +221,6 @@ export function OrganizationStory({
             caption={currentStory.caption}
             containerClassName="xl:hidden"
           />
-          {/* <div className="absolute bottom-15 right-4 flex flex-col items-center gap-2 p-2 bg-black/30 rounded-full z-20">
-            <IconButton onClick={() => ""} icon={ThumbsUp} isActive={true} text="40 тыс." />
-            <IconButton onClick={() => ""} icon={MessageCircle} text="3 тыс." />
-            <IconButton onClick={() => ""} icon={Share2} isActive={true} text="Поделиться" />
-          </div> */}
         </div>
       </div>
       <div className="absolute inset-0 flex z-10 w-full">

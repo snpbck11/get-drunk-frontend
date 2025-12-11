@@ -6,12 +6,10 @@ import { useAppDispatch } from "@/shared/store/hooks";
 import { ConfirmModal, IconButton } from "@/shared/ui";
 import { Dropdown, DropdownItem, DropdownSeparator, TMenuItem } from "@/shared/ui/dropdown";
 import { CircleEllipsis, CirclePlus, LogOut, Settings } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function ProfileDropdown() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isCreateOrganizationModalOpen, setIsCreateOrganizationModalOpen] = useState(false);
 
@@ -47,7 +45,7 @@ export function ProfileDropdown() {
       type: "item",
       label: "Настройки",
       icon: Settings,
-      onClick: () => router.push("/settings"),
+      onClick: () => {},
     },
     { type: "separator" },
     {

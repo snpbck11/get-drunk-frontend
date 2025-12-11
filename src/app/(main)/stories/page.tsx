@@ -1,3 +1,4 @@
+import api from "@/shared/api/api-base";
 import { StoryViewer } from "@/widgets/story";
 
 interface StoriesPageProps {
@@ -5,10 +6,10 @@ interface StoriesPageProps {
 }
 
 export default async function StoriesPage({ searchParams }: StoriesPageProps) {
-  const orgId = searchParams.org ? Number(searchParams.org) : undefined;
+  const orgId = searchParams.org ? Number(searchParams.org) : undefined; // к этому вернёмся позже
   const storyId = searchParams.story;
 
-  // const result = await OrganizationsService.getOrganizationStories();
+  const result = await api.get("/organizations/stories"); // вынести в редакс/фичу
 
   if (!result) {
     return (

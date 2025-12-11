@@ -77,16 +77,9 @@ export function StoryViewer({ organizations, initialStoryId }: StoryViewerProps)
   return (
     <div
       ref={containerRef}
-      className="h-full overflow-y-scroll snap-y snap-mandatory" // избавиться от етой хуеты что снизу
-      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-      <style jsx>{`
-        div::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-
+      className="h-full overflow-y-scroll snap-y snap-mandatory no-scrollbar" // избавиться от етой хуеты что снизу
+    >
       {organizations.slice(0, loadedCount).map((org, index) => {
-        // Для первой организации ищем нужный сторис по ID
         let storyIndex = 0;
         if (index === 0 && initialStoryId) {
           const foundIndex = org.stories?.findIndex((s) => s.id === initialStoryId);
@@ -99,7 +92,7 @@ export function StoryViewer({ organizations, initialStoryId }: StoryViewerProps)
           <div
             key={org.id}
             ref={index === loadedCount - 1 ? lastOrgRef : null}
-            className="h-96vh snap-start">
+            className="h-[97%] snap-start">
             <OrganizationStory
               organization={org}
               isActive={index === activeIndex}

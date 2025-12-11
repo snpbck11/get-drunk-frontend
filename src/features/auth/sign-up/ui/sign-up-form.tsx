@@ -20,6 +20,7 @@ export function SignUpForm() {
   const { dispatch, handleSuccess, isLoading, error } = useAuthForm();
 
   const onSubmit = async (data: SignUpFormData) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirm, ...otherData } = data;
     await dispatch(registerUser(otherData)).unwrap();
     handleSuccess();

@@ -32,6 +32,7 @@ export function OrganizationsViewer() {
     if (organizations.length === 0) {
       dispatch(getOrganizations(page));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (error) {

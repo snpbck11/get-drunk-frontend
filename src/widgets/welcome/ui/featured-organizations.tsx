@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { SectionTitle } from "./section-title";
 
 async function FeaturedOrganizationsList() {
-  const result = await organizationsApi.getOrganizations({ page: 1, limit: 3 });
+  const result = await organizationsApi.getByPage({ page: 1, limit: 3 });
 
   if (!result) {
     return (

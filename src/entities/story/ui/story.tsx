@@ -34,8 +34,12 @@ export function Story({
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [duration, setDuration] = useState(IMAGE_DURATION);
-  const [isVideoReady, setIsVideoReady] = useState(true);
+  const [isVideoReady, setIsVideoReady] = useState(() => {
+    const firstStory = organization.stories?.[initialStoryIndex];
+    return firstStory?.type === "image";
+  });
   const videoRef = useRef<HTMLVideoElement>(null);
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentStory = organization.stories?.[currentStoryIndex];
   const totalStories = organization.stories?.length || 0;
@@ -78,20 +82,61 @@ export function Story({
     return () => clearInterval(interval);
   }, [currentStoryIndex, isPaused, duration, handleNext, isActive, isVideoReady]);
 
-  const handleVideoLoadedData = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+  const handleVideoReady = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const videoDuration = e.currentTarget.duration * 1000;
-    setDuration(videoDuration);
+
+    if (isFinite(videoDuration) && videoDuration > 0) {
+      setDuration(videoDuration);
+    } else {
+      setDuration(IMAGE_DURATION);
+    }
+
     setIsVideoReady(true);
+
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+      loadingTimeoutRef.current = null;
+    }
+  };
+
+  const handleVideoError = () => {
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+      loadingTimeoutRef.current = null;
+    }
+    handleNext();
   };
 
   useEffect(() => {
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+      loadingTimeoutRef.current = null;
+    }
+
     if (currentStory?.type === "image") {
       setDuration(IMAGE_DURATION);
       setIsVideoReady(true);
     } else if (currentStory?.type === "video") {
       setIsVideoReady(false);
+
+      if (isActive) {
+        loadingTimeoutRef.current = setTimeout(() => {
+          handleNext();
+        }, 5000);
+
+        if (videoRef.current) {
+          videoRef.current.load();
+        }
+      }
     }
-  }, [currentStory?.type, currentStory?.id]);
+
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+        loadingTimeoutRef.current = null;
+      }
+    };
+  }, [currentStoryIndex, currentStory?.type, isActive, handleNext]);
 
   useEffect(() => {
     if (!isActive) {
@@ -101,21 +146,21 @@ export function Story({
   }, [isActive]);
 
   useEffect(() => {
-    if (videoRef.current) {
-      if (!isActive) {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-      } else if (isPaused) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!isActive) {
+      video.pause();
+      video.currentTime = 0;
+    } else if (isPaused) {
+      video.pause();
+    } else if (isVideoReady) {
+      video.play().catch(() => {
+      });
     }
-  }, [isPaused, isActive]);
+  }, [isPaused, isActive, isVideoReady]);
 
   if (!currentStory) return null;
-
-  // настроить высоту видео и картинок, всё идёт по пизде
 
   return (
     <div className="relative w-full h-full md:flex xl:grid xl:grid-cols-3 justify-center pt-3">
@@ -184,10 +229,11 @@ export function Story({
                   "w-full h-full object-cover transition-opacity duration-500",
                   !isVideoReady ? "opacity-0" : "opacity-100"
                 )}
-                autoPlay
+                autoPlay={isActive}
                 muted={isMuted}
                 playsInline
-                onLoadedData={handleVideoLoadedData}
+                onLoadedData={handleVideoReady}
+                onError={handleVideoError}
               />
             </div>
           ) : (

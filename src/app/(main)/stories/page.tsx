@@ -5,7 +5,7 @@ import { StoryViewer } from "@/widgets/story";
 
 export default async function StoriesPage() {
   const result = await api.get("/organizations/stories"); // вынести в редакс/фичу
-
+  
   if (!result) {
     return (
       <div className="h-full flex items-center justify-center bg-black text-white">

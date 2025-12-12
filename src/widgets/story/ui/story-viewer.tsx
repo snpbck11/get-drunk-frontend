@@ -1,8 +1,8 @@
 "use client";
 
 import { IOrganization } from "@/entities/organization";
+import { Story } from "@/entities/story";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { OrganizationStory } from "./organization-story";
 
 interface StoryViewerProps {
   organizations: IOrganization[];
@@ -93,7 +93,7 @@ export function StoryViewer({ organizations, initialStoryId }: StoryViewerProps)
             key={org.id}
             ref={index === loadedCount - 1 ? lastOrgRef : null}
             className="h-[97%] snap-start">
-            <OrganizationStory
+            <Story
               organization={org}
               isActive={index === activeIndex}
               initialStoryIndex={index === 0 ? storyIndex : 0}

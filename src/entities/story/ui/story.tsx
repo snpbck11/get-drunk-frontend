@@ -1,14 +1,15 @@
 "use client";
 
 import { IOrganization } from "@/entities/organization";
+import { cn } from "@/shared/lib";
 import { getMediaUrl } from "@/shared/lib/utils";
 import { SpinnerLoader } from "@/shared/ui";
 import { Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { StoryDescription } from "./story-description";
+import { StoryDescription } from "../../../widgets/story/ui/story-description";
 
-interface OrganizationStoryProps {
+interface IStoryProps {
   organization: IOrganization;
   isActive: boolean;
   initialStoryIndex?: number;
@@ -20,7 +21,7 @@ interface OrganizationStoryProps {
 
 const IMAGE_DURATION = 5000;
 
-export function OrganizationStory({
+export function Story({
   organization,
   isActive,
   initialStoryIndex = 0,
@@ -28,7 +29,7 @@ export function OrganizationStory({
   onPrevious,
   isMuted,
   onMuteToggle,
-}: OrganizationStoryProps) {
+}: IStoryProps) {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -114,7 +115,7 @@ export function OrganizationStory({
 
   if (!currentStory) return null;
 
-  // настроить высоту
+  // настроить высоту видео и картинок, всё идёт по пизде
 
   return (
     <div className="relative w-full h-full md:flex xl:grid xl:grid-cols-3 justify-center pt-3">
@@ -126,11 +127,11 @@ export function OrganizationStory({
           caption={currentStory.caption}
         />
       )}
-      <div className="flex w-full justify-center xl:justify-start xl:col-span-2 xl:col-start-2">
-        <div className="w-full max-w-[458px] h-full rounded-3xl overflow-hidden relative shadow-[0px_0px_46px_0px_rgba(255,_255,_255,_0.05)]">
+      <div className="flex w-full h-full justify-center xl:justify-start xl:col-span-2 xl:col-start-2">
+        <div className="w-full max-w-[458px] aspect-[9/16] self-center rounded-3xl overflow-hidden relative shadow-[0px_0px_46px_0px_rgba(255,_255,_255,_0.05)]">
           <div className="absolute top-4 left-4 right-4 z-20 flex gap-1">
-            {organization.stories?.map((_, index) => (
-              <div key={index} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
+            {organization.stories?.map((story, index) => (
+              <div key={story.id} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-white transition-all duration-100"
                   style={{
@@ -179,9 +180,10 @@ export function OrganizationStory({
                 ref={videoRef}
                 key={currentStory.id}
                 src={getMediaUrl(currentStory.mediaUrl)}
-                className={`w-full h-full object-cover transition-opacity duration-500 ${
+                className={cn(
+                  "w-full h-full object-cover transition-opacity duration-500",
                   !isVideoReady ? "opacity-0" : "opacity-100"
-                }`}
+                )}
                 autoPlay
                 muted={isMuted}
                 playsInline
@@ -201,25 +203,11 @@ export function OrganizationStory({
               />
             </div>
           )}
-          {isActive &&
-            organization.stories
-              ?.slice(currentStoryIndex + 1, currentStoryIndex + 3)
-              .filter((story) => story.type === "video")
-              .map((story) => (
-                <video
-                  key={`preload-${story.id}`}
-                  src={getMediaUrl(story.mediaUrl)}
-                  preload="auto"
-                  className="hidden"
-                  muted
-                  playsInline
-                />
-              ))}
           <StoryDescription
             logoUrl={organization.logo}
             name={organization.name}
             caption={currentStory.caption}
-            containerClassName="xl:hidden"
+            containerClassName="xl:hidden absolute bottom-0 left-0"
           />
         </div>
       </div>

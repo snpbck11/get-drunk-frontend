@@ -65,6 +65,7 @@ const authSlice = createSlice({
       })
       .addCase(getCurrentUser.rejected, (state) => {
         state.isLoading = false;
+        state.isAuthChecked = true;
       });
 
     // Logout

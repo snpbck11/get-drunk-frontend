@@ -44,15 +44,17 @@ export function ProfileContent() {
   }
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="flex flex-col p-2 md:p-6">
       <div className="flex justify-between mb-2">
         <div className="flex items-center gap-3">
-          <UserAvatar
-            firstName={user.firstName}
-            lastName={user.lastName}
-            // imageUrl="https://images.unsplash.com/photo-1764712754791-8627ebded3f6?q=80&w=690&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          />
-          <h2 className="font-bold text-3xl">{`${user.firstName} ${user.lastName}`}</h2>
+          <div className="shrink-0">
+            <UserAvatar
+              firstName={user.firstName}
+              lastName={user.lastName}
+              // imageUrl="https://images.unsplash.com/photo-1764712754791-8627ebded3f6?q=80&w=690&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            />
+          </div>
+          <h2 className="font-bold text-3xl overflow-hidden text-ellipsis max-w-[200px] sm:max-w-full">{`${user.firstName} ${user.lastName}`}</h2>
         </div>
         <ProfileDropdown />
       </div>

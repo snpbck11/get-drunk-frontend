@@ -1,23 +1,31 @@
 "use client";
 
-import { X } from "lucide-react";
 import { ReactNode, useRef } from "react";
 import { cn } from "../lib";
 import { useOverlay } from "../lib/hooks";
 import { transitionDurations } from "../lib/transitions";
-import { IconButton } from "./icon-button";
 
 interface DrawerProps {
   open: boolean;
   onClose: () => void;
-  title?: string;
+  headerContent?: (handleClose: () => void) => ReactNode;
   children?: ReactNode;
-  className?: string;
+  drawerClassname?: string;
+  containerClassname?: string;
+  anchor?: "left" | "right" | "top" | "bottom";
 }
 
-const DURATION_MS = 500;
+const DURATION_MS = 300;
 
-export function Drawer({ open, onClose, title, children, className }: DrawerProps) {
+export function Drawer({
+  open,
+  onClose,
+  headerContent,
+  children,
+  drawerClassname,
+  containerClassname,
+  anchor = "left",
+}: DrawerProps) {
   const drawerRef = useRef<HTMLDivElement | null>(null);
 
   const { shouldRender, isAnimating, handleClose, duration } = useOverlay({
@@ -30,9 +38,15 @@ export function Drawer({ open, onClose, title, children, className }: DrawerProp
   if (!shouldRender) return null;
 
   return (
-    <div ref={drawerRef} className={"absolute inset-0 z-50 flex justify-end overflow-hidden"}>
+    <div
+      className={cn(
+        "absolute inset-0 z-50 bg-inherit flex overflow-hidden",
+        anchor === "left" && "justify-start",
+        anchor === "right" && "justify-end",
+        anchor === "top" && "flex-col items-start",
+        anchor === "bottom" && "flex-col items-end"
+      )}>
       <div
-        onClick={handleClose}
         className={cn(
           "absolute inset-0 bg-black/30 dark:bg-black/50 transition-opacity",
           transitionDurations[duration],
@@ -40,18 +54,21 @@ export function Drawer({ open, onClose, title, children, className }: DrawerProp
         )}
       />
       <div
+        ref={drawerRef}
         className={cn(
-          "relative h-full w-2/3 bg-white dark:bg-zinc-900 shadow-2xl", // с шириной еще подумать
+          "relative h-full bg-app shadow-2xl flex flex-col",
           "transition-transform",
           transitionDurations[duration],
-          isAnimating ? "translate-x-0" : "translate-x-full",
-          className
+          (anchor === "left" || anchor === "right") && "h-full",
+          (anchor === "top" || anchor === "bottom") && "w-full",
+          anchor === "left" && (isAnimating ? "translate-x-0" : "-translate-x-full"),
+          anchor === "right" && (isAnimating ? "translate-x-0" : "translate-x-full"),
+          anchor === "top" && (isAnimating ? "translate-y-0" : "-translate-y-full"),
+          anchor === "bottom" && (isAnimating ? "translate-y-0" : "translate-y-full"),
+          drawerClassname
         )}>
-        <div className="flex gap-2 items-center pr-4 py-4 border-b border-neutral-200 dark:border-neutral-800">
-          <IconButton icon={X} onClick={handleClose} iconClassName="w-5 h-5" />
-          <h2 className="text-xl font-semibold">{title}</h2>
-        </div>
-        <div className="p-4 overflow-y-auto h-full">{children}</div>
+        {headerContent && <div className="shrink-0">{headerContent(handleClose)}</div>}
+        <div className={cn("overflow-y-auto flex-1", containerClassname)}>{children}</div>
       </div>
     </div>
   );

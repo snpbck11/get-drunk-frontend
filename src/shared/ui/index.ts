@@ -7,6 +7,7 @@ export { Dropdown, DropdownItem, DropdownSeparator } from "./dropdown";
 export { IconButton } from "./icon-button";
 export { Input } from "./input";
 export { Logo } from "./logo";
+export { MenuHeader } from "./menu-header";
 export { Modal } from "./modal";
 export { Section } from "./section";
 export { Select } from "./select";

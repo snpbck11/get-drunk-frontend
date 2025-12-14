@@ -4,12 +4,12 @@ import { IOrganization } from "@/entities/organization";
 import { Story } from "@/entities/story";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-interface StoryViewerProps {
+interface IStoryViewerProps {
   organizations: IOrganization[];
   initialStoryId?: string;
 }
 
-export function StoryViewer({ organizations, initialStoryId }: StoryViewerProps) {
+export function StoryViewer({ organizations, initialStoryId }: IStoryViewerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [loadedCount, setLoadedCount] = useState(3);
   const [isMuted, setIsMuted] = useState(true);
@@ -46,15 +46,23 @@ export function StoryViewer({ organizations, initialStoryId }: StoryViewerProps)
     const container = containerRef.current;
     if (!container) return;
 
+    let scrollTimeout: NodeJS.Timeout;
+
     const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const windowHeight = container.clientHeight;
-      const newIndex = Math.round(scrollTop / windowHeight);
-      setActiveIndex(newIndex);
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const scrollTop = container.scrollTop;
+        const windowHeight = container.clientHeight;
+        const newIndex = Math.round(scrollTop / windowHeight);
+        setActiveIndex(newIndex);
+      }, 150);
     };
 
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      clearTimeout(scrollTimeout);
+    };
   }, []);
 
   useEffect(() => {
@@ -92,7 +100,7 @@ export function StoryViewer({ organizations, initialStoryId }: StoryViewerProps)
           <div
             key={org.id}
             ref={index === loadedCount - 1 ? lastOrgRef : null}
-            className="h-[97%] snap-start">
+            className="h-[97%] snap-start snap-always">
             <Story
               organization={org}
               isActive={index === activeIndex}

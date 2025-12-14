@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --app-bg: white;
+    --app-text: #0a0a0a;
+  }
+
+  .dark {
+    --app-bg: #09090b;
+    --app-text: #fafafa;
+  }
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -8,5 +20,13 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  .bg-app {
+    background-color: var(--app-bg);
+  }
+
+  .text-app {
+    color: var(--app-text);
   }
 }

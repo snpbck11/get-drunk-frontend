@@ -32,7 +32,7 @@ export function OrganizationsViewer() {
     if (organizations.length === 0) {
       dispatch(getOrganizations(page));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (error) {
@@ -44,7 +44,7 @@ export function OrganizationsViewer() {
   }
 
   return (
-    <div className="p-10 grid md:grid-cols-2 xl:grid-cols-3 flex-col gap-6">
+    <div className="p-2 md:p-10 grid md:grid-cols-2 xl:grid-cols-3 flex-col gap-6">
       {organizations?.map((org, index) => {
         if (organizations.length === index + 1) {
           return (

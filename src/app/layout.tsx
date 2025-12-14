@@ -7,8 +7,11 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "City Stories - Discover Local Places",
-  description: "Watch stories from your favorite local businesses",
+  title: "GetDrunk",
+  description: "Смотри сторис любимых заведений своего города",
+  icons: {
+    icon: "/icon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -22,7 +25,7 @@ export default function RootLayout({
         className={cn(
           inter.className,
           "min-h-screen",
-          "bg-white dark:bg-zinc-950 text-gray-950 dark:text-gray-50"
+          "bg-app text-app"
         )}>
         <Providers>{children}</Providers>
       </body>

@@ -10,9 +10,18 @@ interface ISidebarLinkProps {
   label: string;
   icon: LucideIcon;
   vertical?: boolean;
+  className?: string;
+  onClick?: () => void;
 }
 
-export function SidebarLink({ link, label, icon: Icon, vertical }: ISidebarLinkProps) {
+export function SidebarLink({
+  link,
+  label,
+  icon: Icon,
+  vertical = false,
+  className,
+  onClick,
+}: ISidebarLinkProps) {
   const pathname = usePathname();
 
   const isActive = pathname === link;
@@ -20,10 +29,12 @@ export function SidebarLink({ link, label, icon: Icon, vertical }: ISidebarLinkP
   return (
     <Link
       href={link}
+      onClick={onClick}
       className={cn(
         "flex items-center gap-3 p-3 rounded-lg pl-[18px]",
         isActive ? "bg-blue-500 dark:bg-purple-600" : "hover:bg-blue-300 dark:hover:bg-purple-300",
-        vertical && "flex-col p-2 pt-3"
+        vertical && "flex-col p-2 pt-3",
+        className
       )}>
       <Icon className="w-5 h-5" />
       <p className={cn("text-sm font-medium", vertical && "text-center text-[10px]")}>{label}</p>

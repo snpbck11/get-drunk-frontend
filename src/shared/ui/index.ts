@@ -1,6 +1,7 @@
 export { Alert } from "./alert";
 export { AuthCard } from "./auth-card";
 export { Button } from "./button";
+export { Carousel } from "./carousel";
 export { ConfirmModal } from "./confirm-modal";
 export { Drawer } from "./drawer";
 export { Dropdown, DropdownItem, DropdownSeparator } from "./dropdown";

@@ -1,23 +1,35 @@
 "use client";
 
 import { IOrganization } from "@/entities/organization";
-import { Drawer } from "@/shared/ui";
-import { Globe, MapPin, Phone } from "lucide-react";
+import { Drawer, IconButton } from "@/shared/ui";
+import { Globe, MapPin, Phone, X } from "lucide-react";
 import Image from "next/image";
 
-interface OrganizationDetailsDrawerProps {
+interface IOrganizationDetailsDrawerProps {
   organization: IOrganization;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function OrganizationDetailsDrawer({  // добавить редактирование
+export function OrganizationDetailsDrawer({
+  // добавить редактирование
   organization,
   isOpen,
   onClose,
-}: OrganizationDetailsDrawerProps) {
+}: IOrganizationDetailsDrawerProps) {
   return (
-    <Drawer open={isOpen} onClose={onClose} title={organization.name}>
+    <Drawer
+      open={isOpen}
+      onClose={onClose}
+      anchor="right"
+      drawerClassname="w-2/3"
+      containerClassname="p-6"
+      headerContent={(handleClose) => (
+        <div className="flex gap-2 items-center pr-4 py-4 border-b border-neutral-200 dark:border-neutral-800">
+          <IconButton icon={X} onClick={handleClose} iconClassName="w-5 h-5" />
+          <h2 className="text-xl font-semibold">{organization.name}</h2>
+        </div>
+      )}>
       <div className="space-y-6">
         {organization.coverImage && (
           <Image
@@ -55,7 +67,7 @@ export function OrganizationDetailsDrawer({  // добавить редакти�
                 <a
                   href={organization.website}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer" //poka noreferrer
                   className="hover:text-purple-600">
                   {organization.website}
                 </a>
@@ -74,7 +86,7 @@ export function OrganizationDetailsDrawer({  // добавить редакти�
             <h3 className="font-semibold text-lg mb-2">Сторисы</h3>
             <p className="text-gray-600 dark:text-gray-300">Всего: {organization.stories.length}</p>
           </div>
-        )}  
+        )}
         <div className="flex gap-2 flex-wrap">
           <span
             className={`px-3 py-1 rounded-full text-sm ${

@@ -39,7 +39,6 @@ export function Story({
     return firstStory?.type === "image";
   });
   const videoRef = useRef<HTMLVideoElement>(null);
-  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentStory = organization.stories?.[currentStoryIndex];
   const totalStories = organization.stories?.length || 0;
@@ -85,34 +84,28 @@ export function Story({
   const handleVideoReady = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     const videoDuration = e.currentTarget.duration * 1000;
 
-    if (isFinite(videoDuration) && videoDuration > 0) {
+    if (videoDuration && videoDuration > 0) {
       setDuration(videoDuration);
     } else {
       setDuration(IMAGE_DURATION);
     }
 
     setIsVideoReady(true);
-
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current);
-      loadingTimeoutRef.current = null;
-    }
   };
 
   const handleVideoError = () => {
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current);
-      loadingTimeoutRef.current = null;
-    }
     handleNext();
   };
 
-  useEffect(() => {
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current);
-      loadingTimeoutRef.current = null;
-    }
+  const handlePauseVideo = () => {
+    setIsPaused(true);
+  };
 
+  const handleUnpauseVideo = () => {
+    setIsPaused(false);
+  };
+
+  useEffect(() => {
     if (currentStory?.type === "image") {
       setDuration(IMAGE_DURATION);
       setIsVideoReady(true);
@@ -120,22 +113,11 @@ export function Story({
       setIsVideoReady(false);
 
       if (isActive) {
-        loadingTimeoutRef.current = setTimeout(() => {
-          handleNext();
-        }, 5000);
-
         if (videoRef.current) {
           videoRef.current.load();
         }
       }
     }
-
-    return () => {
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current);
-        loadingTimeoutRef.current = null;
-      }
-    };
   }, [currentStoryIndex, currentStory?.type, isActive, handleNext]);
 
   useEffect(() => {
@@ -155,25 +137,24 @@ export function Story({
     } else if (isPaused) {
       video.pause();
     } else if (isVideoReady) {
-      video.play().catch(() => {
-      });
+      video.play().catch(() => {});
     }
   }, [isPaused, isActive, isVideoReady]);
 
   if (!currentStory) return null;
 
   return (
-    <div className="relative w-full h-full md:flex xl:grid xl:grid-cols-3 justify-center pt-3">
+    <div className="relative w-full h-full md:flex xl:grid xl:grid-cols-3 justify-center pt-3 pb-0.5">
       {isActive && (
         <StoryDescription
-          containerClassName="hidden xl:flex"
+          containerClassName="hidden xl:flex text-black dark:text-white"
           name={organization.name}
           logoUrl={organization.logo}
           caption={currentStory.caption}
         />
       )}
       <div className="flex w-full h-full justify-center xl:justify-start xl:col-span-2 xl:col-start-2">
-        <div className="w-full max-w-[458px] aspect-[9/16] self-center rounded-3xl overflow-hidden relative shadow-[0px_0px_46px_0px_rgba(255,_255,_255,_0.05)]">
+        <div className="w-full max-w-[458px] h-full aspect-[9/16] self-center rounded-3xl overflow-hidden relative shadow-[0px_0px_46px_0px_rgba(255,_255,_255,_0.05)] bg-black">
           <div className="absolute top-4 left-4 right-4 z-20 flex gap-1">
             {organization.stories?.map((story, index) => (
               <div key={story.id} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
@@ -226,7 +207,7 @@ export function Story({
                 key={currentStory.id}
                 src={getMediaUrl(currentStory.mediaUrl)}
                 className={cn(
-                  "w-full h-full object-cover transition-opacity duration-500",
+                  "w-full h-full object-contain transition-opacity duration-500",
                   !isVideoReady ? "opacity-0" : "opacity-100"
                 )}
                 autoPlay={isActive}
@@ -242,7 +223,7 @@ export function Story({
                 key={currentStory.id}
                 src={getMediaUrl(currentStory.mediaUrl)}
                 alt={currentStory.caption || "Story"}
-                className="object-cover"
+                className="object-contain"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority={isActive}
@@ -260,9 +241,11 @@ export function Story({
       <div className="absolute inset-0 flex z-10 w-full">
         <div className="w-full cursor-pointer" onClick={handlePrevious} />
         <div
-          className="min-w-[358px] cursor-pointer"
-          onMouseDown={() => setIsPaused(true)}
-          onMouseUp={() => setIsPaused(false)}
+          className="min-w-[300px] max-w-[358px] w-full cursor-pointer"
+          onMouseDown={handlePauseVideo}
+          onMouseUp={handleUnpauseVideo}
+          onTouchStart={handlePauseVideo}
+          onTouchEnd={handleUnpauseVideo}
         />
         <div className="w-full cursor-pointer" onClick={handleNext} />
       </div>

@@ -15,12 +15,13 @@ export function StoryDescription({
   containerClassName,
 }: IStoryDescriptionProps) {
   return (
-    <div className={cn("flex flex-col self-end px-4 pb-4 w-full", containerClassName)}>
+    <div
+      className={cn("flex flex-col self-end px-4 pb-4 w-full", "text-white", containerClassName)}>
       <div className="flex items-center gap-3">
         {logoUrl && <OrganizationLogo logoUrl={logoUrl} name={name} size="sm" />}
         <p className="font-semibold">{name}</p>
       </div>
-      <p className="text-center md:text-left text-lg px-4 py-2">{caption}</p>
+      <p className="md:text-left text-lg px-4 py-2">{caption}</p>
     </div>
   );
 }
